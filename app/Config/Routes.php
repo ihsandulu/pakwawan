@@ -95,6 +95,7 @@ $routes->add('/rprodukmasuk', 'report\rprodukmasuk::index');
 $routes->add('/stockopname', 'transaction\stockopname::index');
 
 $routes->add('/rhistorystock', 'report\rhistorystock::index');
+$routes->add('/rbagihasil', 'report\rbagihasil::index');
 
 $routes->add('/mdiscount', 'master\mdiscount::index');
 
