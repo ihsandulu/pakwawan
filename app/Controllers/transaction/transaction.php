@@ -397,9 +397,11 @@ class transaction extends baseController
                 foreach ($cari->getResult() as $cari) {
                     $qty = $cari->transactiond_qty;
                     $price = $cari->transactiond_price;
+                    $beli = $cari->transactiond_beli;
 
                     $input["transactiond_qty"] = $qty + $transactiond_qty;
                     $input["transactiond_price"] = $price + ($sell * $qty);
+                    $input["transactiond_beli"] = $beli + ($buy * $qty);
                     $transactiond->update($input, $where);
 
 
@@ -420,6 +422,7 @@ class transaction extends baseController
                 $where["store_id"] = session()->get("store_id");
                 $where["transactiond_qty"] = $transactiond_qty;
                 $where["transactiond_price"] = $sell * $transactiond_qty;
+                $where["transactiond_beli"] = $buy * $transactiond_qty;
                 $transactiond->insert($where);
                 $transactiond_id = $this->db->insertID();
 
@@ -532,24 +535,29 @@ class transaction extends baseController
 
             $qty = $transactiond->transactiond_qty;
             $price = $transactiond->transactiond_price;
+            $beli = $transactiond->transactiond_beli;
             // $data["message"] = $qty;
             if ($type == "tambah") {
                 $qty += 1;
-                $price = $price + $sell;
+                 $price = $sell * $qty;
+                $beli = $buy *$qty;
             }
             if ($type == "kurang") {
                 $qty -= 1;
-                $price = $price - $sell;
+                $price = $sell * $qty;
+                $beli = $buy *$qty;
             }
             if ($type == "update") {
                 $qty = $transactiond_qty;
                 $price = $sell * $transactiond_qty;
+                $beli = $buy * $transactiond_qty;
             }
 
             // echo $data["message"] =$price."==".$sell;die;
 
             $input2["transactiond_qty"] = $qty;
             $input2["transactiond_price"] = $price;
+            $input2["transactiond_beli"] = $beli;
             $where2["transactiond_id"] = $transactiond_id;
             $builder = $this->db->table('transactiond');
             $builder->update($input2, $where2);

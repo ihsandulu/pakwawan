@@ -452,6 +452,24 @@
                         )
                     ) ||
                     (
+                        isset(session()->get("halaman")['29']['act_read']) 
+                        && session()->get("halaman")['29']['act_read'] == "1"
+                    )
+                ) { ?>
+                <li> 
+                    <a class="  " href="<?= base_url("rbagihasil"); ?>" aria-expanded="false"><i class="fa fa-book"></i><span class="hide-menu">Bagi Hasil</span></a>
+                </li>
+                <?php }?>
+                <?php 
+                if (
+                    (
+                        isset(session()->get("position_administrator")[0][0]) 
+                        && (
+                            session()->get("position_administrator") == "1" 
+                            || session()->get("position_administrator") == "2"
+                        )
+                    ) ||
+                    (
                         isset(session()->get("halaman")['18']['act_read']) 
                         && session()->get("halaman")['18']['act_read'] == "1"
                     )
