@@ -79,8 +79,8 @@
                                         transactiond.product_id,
                                         product.product_name,
                                         SUM(transactiond.transactiond_qty) AS jumlah,
-                                        SUM(transactiond.transactiond_qty * transactiond.transactiond_price) AS terjual,
-                                        SUM(transactiond.transactiond_qty * transactiond.transactiond_beli) AS terbeli
+                                        SUM(transactiond.transactiond_price) AS terjual,
+                                        SUM(transactiond.transactiond_beli) AS terbeli
                                     ")
                                     ->join("transactiond", "transaction.transaction_id = transactiond.transaction_id", "left")
                                     ->join("product", "product.product_id = transactiond.product_id", "left")
