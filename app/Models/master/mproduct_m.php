@@ -16,7 +16,7 @@ class mproduct_m extends core_m
         } else {
             $productd["product_id"] = -1;
         }
-            $productd["store_id"] = session()->get("store_id");
+        $productd["store_id"] = session()->get("store_id");
         $us = $this->db
             ->table("product")
             ->getWhere($productd);
@@ -34,18 +34,20 @@ class mproduct_m extends core_m
         } else {
             foreach ($this->db->getFieldNames('product') as $field) {
                 $data[$field] = "";
-            }            
-            $ubeno="UBE".date("ymdHis");
+            }
+            $ubeno = "UBE" . date("ymdHis");
             $data["product_ube"] = $ubeno;
             $data["product_id"] = 0;
-            
+
             //buy
-            $purchase=$this->db->table("purchased")
-            ->orderBy("purchased_id ","DESC")
-            ->limit(1)
-            ->getWhere($productd);
+            $purchase = $this->db->table("purchased")
+                ->orderBy("purchased_id ", "DESC")
+                ->limit(1)
+                ->getWhere($productd);
             $data["product_buy"] = 0;
-           foreach ($purchase->getResult() as $purchase) {$data["product_buy"] = $purchase->purchased_price/$purchase->purchased_qty;}
+            foreach ($purchase->getResult() as $purchase) {
+                $data["product_buy"] = $purchase->purchased_price / $purchase->purchased_qty;
+            }
         }
 
         //upload image
@@ -64,7 +66,7 @@ class mproduct_m extends core_m
 
             //$namabaru = $file->getRandomName();//define nama fiel yang baru secara acak
 
-            if ($type == 'image/jpg'||$type == 'image/jpeg'||$type == 'image/png') //cek mime file
+            if ($type == 'image/jpg' || $type == 'image/jpeg' || $type == 'image/png') //cek mime file
             {    // File Tipe Sesuai   
                 helper('filesystem'); // Load Helper File System
                 $direktori = ROOTPATH . 'public\images\product_picture'; //definisikan direktori upload            
@@ -91,26 +93,26 @@ class mproduct_m extends core_m
                 // File Tipe Tidak Sesuai
                 $data['uploadproduct_picture'] = "Format File Salah !";
             }
-        } 
+        }
 
         //delete
-        if ($this->request->getPost("delete") == "OK") {     
+        if ($this->request->getPost("delete") == "OK") {
             $product_id = $this->request->getPost("product_id");
-            $cek=$this->db->table("transactiond")
-            ->where("product_id", $product_id) 
-            ->get()
-            ->getNumRows();
-            if($cek>0){
+            $cek = $this->db->table("transactiond")
+                ->where("product_id", $product_id)
+                ->get()
+                ->getNumRows();
+            if ($cek > 0) {
                 $data["message"] = "Product masih dipakai di data transaksi!";
-            } else{         
+            } else {
                 $this->db
-                ->table("product")
-                ->delete(array("product_id" => $product_id,"store_id" =>session()->get("store_id")));
+                    ->table("product")
+                    ->delete(array("product_id" => $product_id, "store_id" => session()->get("store_id")));
 
 
                 $this->db
-                ->table("sell")
-                ->delete(array("product_id" => $product_id,"store_id" =>session()->get("store_id")));
+                    ->table("sell")
+                    ->delete(array("product_id" => $product_id, "store_id" => session()->get("store_id")));
                 // echo $this->db->getLastQuery(); die;
 
                 $data["message"] = "Delete Success";
@@ -120,11 +122,11 @@ class mproduct_m extends core_m
         //insert
         if ($this->request->getPost("create") == "OK") {
             foreach ($this->request->getPost() as $e => $f) {
-                if ($e != 'create' && $e != 'product_id' && substr($e,0,10)!="sell_price") {
+                if ($e != 'create' && $e != 'product_id' && substr($e, 0, 10) != "sell_price") {
                     $input[$e] = $this->request->getPost($e);
                 }
             }
-            
+
             $input["store_id"] = session()->get("store_id");
 
             $builder = $this->db->table('product');
@@ -134,30 +136,30 @@ class mproduct_m extends core_m
             $product_id = $this->db->insertID();
 
             foreach ($this->request->getPost() as $e => $f) {
-                if(substr($e,0,10)=="sell_price"){
-                    $sell=explode("|",$e);
-                    $input1["positionm_id"]=$sell[1];
-                    $input1["product_id"]=$product_id;
-                    $input1["sell_price"]=$f;                    
-                    $input1["sell_percent"]=(($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
+                if (substr($e, 0, 10) == "sell_price") {
+                    $sell = explode("|", $e);
+                    $input1["positionm_id"] = $sell[1];
+                    $input1["product_id"] = $product_id;
+                    $input1["sell_price"] = $f;
+                    $input1["sell_percent"] = (($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
 
                     //pembulatan 500an
                     $asal = $input1["sell_price"];
-                    $tiga = substr($asal,-3);
+                    $tiga = substr($asal, -3);
                     $sisa = $asal - $tiga;
                     $hasil = 0;
                     // echo $sisa;
                     // if($tiga>500){$hasil=$sisa+1000;}else{$hasil=$sisa+500;}
-                    if($tiga>500){
-                        $hasil=$sisa+1000;
-                    }else if($tiga>0){
-                        $hasil=$sisa+500;
-                    }else{
-                        $hasil=$sisa;
+                    if ($tiga > 500) {
+                        $hasil = $sisa + 1000;
+                    } else if ($tiga > 0) {
+                        $hasil = $sisa + 500;
+                    } else {
+                        $hasil = $sisa;
                     }
-                    $input1["sell_price"]=$hasil;
+                    $input1["sell_price"] = $hasil;
 
-                    $input1["store_id"]=session()->get("store_id");
+                    $input1["store_id"] = session()->get("store_id");
                     $builder = $this->db->table('sell');
                     $builder->insert($input1);
                 }
@@ -166,12 +168,12 @@ class mproduct_m extends core_m
             $data["message"] = "Insert Data Success";
         }
         //echo $_POST["create"];die;
-        
+
         //update
         if ($this->request->getPost("change") == "OK") {
-            $product_id=$this->request->getPost("product_id");
+            $product_id = $this->request->getPost("product_id");
             foreach ($this->request->getPost() as $e => $f) {
-                if ($e != 'change' && $e != 'product_picture' && substr($e,0,10)!="sell_price") {
+                if ($e != 'change' && $e != 'product_picture' && substr($e, 0, 10) != "sell_price") {
                     $input[$e] = $this->request->getPost($e);
                 }
             }
@@ -179,9 +181,9 @@ class mproduct_m extends core_m
             $this->db->table('product')->update($input, array("product_id" => $product_id));
 
             foreach ($this->request->getPost() as $e => $f) {
-                if(substr($e,0,10)=="sell_price"){          
-                    $sell=explode("|",$e);
-                    $positionm_id=$sell[1];
+                if (substr($e, 0, 10) == "sell_price") {
+                    $sell = explode("|", $e);
+                    $positionm_id = $sell[1];
                     $selld["store_id"] = session()->get("store_id");
                     $selld["product_id"] = $product_id;
                     $selld["positionm_id"] = $positionm_id;
@@ -189,65 +191,65 @@ class mproduct_m extends core_m
                         ->table("sell")
                         ->getWhere($selld);
                     if ($sell->getNumRows() > 0) {
-                        $where1["sell_id"]=$sell->getRow()->sell_id;
-                        
-                        
-                        $input1["sell_price"]=$f;                    
-                        $input1["sell_percent"]=(($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
+                        $where1["sell_id"] = $sell->getRow()->sell_id;
+
+
+                        $input1["sell_price"] = $f;
+                        $input1["sell_percent"] = (($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
 
                         //pembulatan 500an
                         $asal = $input1["sell_price"];
-                        $tiga = substr($asal,-3);
+                        $tiga = substr($asal, -3);
                         $sisa = $asal - $tiga;
                         $hasil = 0;
                         // echo $asal."=>";
                         // echo $sisa."=>";
                         // echo $tiga."<br/>";
                         // if($tiga>500){$hasil=$sisa+1000;}else{$hasil=$sisa+500;}
-                        if($tiga>500){
-                            $hasil=$sisa+1000;
-                        }else if($tiga>0){
-                            $hasil=$sisa+500;
-                        }else{
-                            $hasil=$sisa;
+                        if ($tiga > 500) {
+                            $hasil = $sisa + 1000;
+                        } else if ($tiga > 0) {
+                            $hasil = $sisa + 500;
+                        } else {
+                            $hasil = $sisa;
                         }
-                        $input1["sell_price"]=$hasil;
+                        $input1["sell_price"] = $hasil;
 
                         $builder = $this->db->table('sell');
-                        $builder->update($input1,$where1);
-                    }else{                  
-                        $input1["positionm_id"]=$positionm_id;
-                        $input1["product_id"]=$product_id;
+                        $builder->update($input1, $where1);
+                    } else {
+                        $input1["positionm_id"] = $positionm_id;
+                        $input1["product_id"] = $product_id;
 
-                        
-                        $input1["sell_price"]=$f;                    
-                        $input1["sell_percent"]=(($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
+
+                        $input1["sell_price"] = $f;
+                        $input1["sell_percent"] = (($input1["sell_price"] - $input["product_buy"]) / $input["product_buy"]) * 100;
 
                         //pembulatan 500an
                         $asal = $input1["sell_price"];
-                        $tiga = substr($asal,-3);
+                        $tiga = substr($asal, -3);
                         $sisa = $asal - $tiga;
                         $hasil = 0;
                         // echo $asal."=>";
                         // echo $sisa."=>";
                         // echo $tiga."<br/>";
                         // if($tiga>500){$hasil=$sisa+1000;}else{$hasil=$sisa+500;}
-                        if($tiga>500){
-                            $hasil=$sisa+1000;
-                        }else if($tiga>0){
-                            $hasil=$sisa+500;
-                        }else{
-                            $hasil=$sisa;
+                        if ($tiga > 500) {
+                            $hasil = $sisa + 1000;
+                        } else if ($tiga > 0) {
+                            $hasil = $sisa + 500;
+                        } else {
+                            $hasil = $sisa;
                         }
-                        $input1["sell_price"]=$hasil;
+                        $input1["sell_price"] = $hasil;
 
-                        $input1["store_id"]=session()->get("store_id");
+                        $input1["store_id"] = session()->get("store_id");
                         $builder = $this->db->table('sell');
                         $builder->insert($input1);
                     }
                 }
             }
-                    // die;
+            // die;
 
             $data["message"] = "Update Success";
             //echo $this->db->last_query();die;
@@ -256,25 +258,28 @@ class mproduct_m extends core_m
         //update buy
         set_time_limit(300);
         if ($this->request->getPost("updatebuy") == "OK") {
-            $product=$this->db->table("product")
-            ->where("store_id",session()->get("store_id"))
-            ->get();
-            foreach ($product->getResult() as $product) {
-                $purchased=$this->db->table("purchased")
-                // ->select("*,COUNT(purchased_id)")
-                ->where("product_id",$product->product_id)
-                ->where("store_id",session()->get("store_id"))
-                ->orderBy("purchased_id ","DESC")
-                ->limit(1)
+            $product = $this->db->table("product")
+                ->where("store_id", session()->get("store_id"))
                 ->get();
-                
+            foreach ($product->getResult() as $product) {
+                $purchased = $this->db->table("purchased")
+                    // ->select("*,COUNT(purchased_id)")
+                    ->where("product_id", $product->product_id)
+                    ->where("store_id", session()->get("store_id"))
+                    ->orderBy("purchased_id ", "DESC")
+                    ->limit(1)
+                    ->get();
+
                 foreach ($purchased->getResult() as $purchased) {
-                    if($purchased->purchased_price>0 && $purchased->purchased_qty>0){
-                        $input["product_buy"] = $purchased->purchased_price/$purchased->purchased_qty;  
+                    if ($purchased->purchased_price > 0 && $purchased->purchased_qty > 0) {
+                        //update harga beli master product
+                        $input["product_buy"] = $purchased->purchased_price / $purchased->purchased_qty;
                         $where["product_id"] = $product->product_id;
                         $this->db->table('product')->update($input, $where);
 
-                         $positionm=$this->db->table("positionm")
+
+                        //update harga jual master product
+                        /*  $positionm=$this->db->table("positionm")
                         ->where("positionm.store_id",session()->get("store_id"))
                         ->get();
                             // echo $this->db->getLastQuery();die;
@@ -307,10 +312,10 @@ class mproduct_m extends core_m
                             }
                             // echo $this->db->getLastQuery();
 
-                        }
+                        } */
                         // die;
                     }
-                }                
+                }
             }
             $data["message"] = "Update Success";
             //echo $this->db->last_query();die;
