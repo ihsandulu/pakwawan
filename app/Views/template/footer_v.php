@@ -64,15 +64,15 @@
         })
     }
 
-    function hidebar(){
+    function hidebar() {
         // $(".scroll-sidebar").toggleClass("hidebar");
-        setTimeout(function(){
+        setTimeout(function() {
             $(".scroll-sidebar").css({
-                "height":"inherit",
+                "height": "inherit",
                 "overflow": "auto"
             });
-        },500);
-        
+        }, 500);
+
     }
 
 
@@ -131,6 +131,35 @@
 
 <script src="js/lib/toastr/toastr.min.js"></script>
 <script src="js/lib/toastr/toastr.init.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#example231").DataTable({
+            order: [
+                [0, "asc"],
+                [1, "asc"],
+            ],
+            dom: "Bfrtip",
+            buttons: [
+                "copy",
+                "csv",
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function(data, row, column, node) {
+                                return data.toString().replace(/[.,]/g, '');
+                            }
+                        }
+                    }
+                },
+                "pdf",
+                "print",
+            ],
+        });
+    });
+</script>
 
 </body>
 
