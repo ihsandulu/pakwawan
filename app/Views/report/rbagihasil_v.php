@@ -49,7 +49,7 @@
                     <?php } ?>
 
                     <div class="table-responsive m-t-40">
-                        <table id="example231" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                        <table id="e31" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <!-- <table id="dataTable" class="table table-condensed table-hover w-auto dtable"> -->
                             <thead class="">
                                 <tr>
@@ -166,5 +166,38 @@
     $("#page-title").text(title);
     $("#page-title-link").text(title);
 </script>
+<script>
+    $(document).ready(function() {
+        if (!$.fn.DataTable.isDataTable('#e31')) {
+
+            $("#e31").DataTable({
+                order: [
+                    [0, "asc"],
+                    [1, "asc"],
+                ],
+                dom: "Bfrtip",
+                buttons: [
+                    "copy",
+                    "csv",
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Export Excel',
+                        exportOptions: {
+                            columns: ':visible',
+                            format: {
+                                body: function(data, row, column, node) {
+                                    return data.toString().replace(/[.,]/g, '');
+                                }
+                            }
+                        }
+                    },
+                    "pdf",
+                    "print",
+                ],
+            });
+        }
+    });
+</script>
+
 
 <?php echo  $this->include("template/footer_v"); ?>
