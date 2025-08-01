@@ -108,9 +108,14 @@
                                 $tbill = 0;
                                 $tpay = 0;
                                 $tchange = 0;
+                                $tterjual=0;
+                                $tterbeli=0;
+                                $tselisih=0;
+                                $t60=0;
+                                $t40=0;
                                 foreach ($usr->getResult() as $usr) {
                                     if ($usr->terbeli == 0) {
-                                        $usr->terbeli = $arpbeli[$usr->product_id]*$usr->jumlah;
+                                        $usr->terbeli = $arpbeli[$usr->product_id] * $usr->jumlah;
                                     }
                                     $selisih = $usr->terjual - $usr->terbeli;
                                 ?>
@@ -119,14 +124,31 @@
                                         <td><?= $usr->transaction_date; ?></td>
                                         <td><?= $usr->product_name; ?></td>
                                         <td><?= $usr->jumlah; ?></td>
-                                        <td><?= number_format($usr->terjual, 0, ".", ","); ?></td>
-                                        <td><?= number_format($usr->terbeli, 0, ".", ","); ?></td>
-                                        <td><?= number_format($selisih, 0, ".", ","); ?></td>
-                                        <td><?= number_format(60 / 100 * $selisih, 0, ".", ","); ?></td>
-                                        <td><?= number_format(40 / 100 * $selisih, 0, ".", ","); ?></td>
+                                        <td><?= number_format($usr->terjual, 0, ".", ",");
+                                            $tterjual += $usr->terjual; ?></td>
+                                        <td><?= number_format($usr->terbeli, 0, ".", ",");
+                                            $tterbeli += $usr->terbeli; ?></td>
+                                        <td><?= number_format($selisih, 0, ".", ",");
+                                            $tselisih += $selisih; ?></td>
+                                        <td><?php $npuluh = 60 / 100 * $selisih;
+                                            echo number_format($npuluh, 0, ".", ",");
+                                            $t60 += $npuluh; ?></td>
+                                        <td><?php $epuluh = 40 / 100 * $selisih;
+                                            echo  number_format($epuluh, 0, ".", ",");
+                                            $t40 += $epuluh; ?></td>
                                     </tr>
                                 <?php } ?>
-
+                                <tr>
+                                    <td><?= $no++; ?></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">Total</td>
+                                    <td class="text-right"><?= number_format($tterjual, 0, ".", ","); ?></td>
+                                    <td class="text-right"><?= number_format($tterbeli, 0, ".", ","); ?></td>
+                                    <td class="text-right"><?= number_format($tselisih, 0, ".", ","); ?></td>
+                                    <td class="text-right"><?= number_format($t60, 0, ".", ","); ?></td>
+                                    <td class="text-right"><?= number_format($t40, 0, ".", ","); ?></td>
+                                </tr>
 
                             </tbody>
                         </table>
