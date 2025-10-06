@@ -160,6 +160,33 @@
                     "print",
                 ],
             });
+
+            $("#example230").DataTable({
+                ordering: false,
+                dom: "Bfrtip",
+                buttons: [
+                    "copy",
+                    "csv",
+                    {
+                        extend: "excel",
+                        exportOptions: {
+                            // ⛔ Tidak ekspor kolom pertama
+                            columns: ":visible:not(:first-child)",
+                            format: {
+                                body: function(data, row, column, node) {
+                                    // Bersihkan HTML jadi teks murni
+                                    var text = $("<div>").html(data).text().trim();
+                                    text = text.replace(/,/g, ""); // hapus koma jika perlu
+                                    return text;
+                                },
+                            },
+                        },
+                    },
+                    "pdf",
+                    "print",
+                ],
+            });
+
         }
     });
 </script>
