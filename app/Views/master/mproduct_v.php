@@ -331,7 +331,7 @@
                                         $selisihHari = ($outdate - $today) / (60 * 60 * 24);
 
                                        
-                                        $outdatenya = ($selisihHari < 365) ? '</br><span class="text-danger">'.$usr->purchased_outdate.'</span>' : '';
+                                        $outdatenya = ($selisihHari < 365) ? '</br><span class="text-danger">'.$usr->purchased_outdate.'</span>' : '</br><span class="text-default">'.$usr->purchased_outdate.'</span>';
                                     ?>
                                         <tr>
                                             <?php if (!isset($_GET["report"])) { ?>
