@@ -269,12 +269,39 @@
                                 </thead>
                                 <tbody>
                                     <?php
+
                                     // echo $x;die;
+                                    $subquery = $this->db->table('purchased')
+                                        ->select('product_id, MAX(purchased_id) as last_purchase_id')
+                                        ->groupBy('product_id');
+
                                     $usr = $this->db
                                         ->table("product")
+                                        ->select('
+        product.*,
+        category.*,
+        unit.*,
+        store.*,
+        p.purchased_outdate
+    ')
                                         ->join("category", "category.category_id=product.category_id", "left")
                                         ->join("unit", "unit.unit_id=product.unit_id", "left")
                                         ->join("store", "store.store_id=product.store_id", "left")
+
+                                        // join subquery transaksi terakhir
+                                        ->join(
+                                            "({$subquery->getCompiledSelect()}) lp",
+                                            "lp.product_id = product.product_id",
+                                            "left"
+                                        )
+
+                                        // join lagi ke purchased ambil outdate-nya
+                                        ->join(
+                                            "purchased p",
+                                            "p.purchased_id = lp.last_purchase_id",
+                                            "left"
+                                        )
+
                                         ->where("product.store_id", session()->get("store_id"))
                                         ->orderBy("product_name", "ASC")
                                         ->get();
@@ -297,6 +324,14 @@
                                             $pmember[$x] = $jual->sell_price;
                                             $x++;
                                         }
+
+                                        $outdate = strtotime($usr->purchased_outdate);
+                                        $today   = time();
+
+                                        $selisihHari = ($outdate - $today) / (60 * 60 * 24);
+
+                                       
+                                        $outdatenya = ($selisihHari < 365) ? '</br><span class="text-danger">'.$usr->purchased_outdate.'</span>' : '';
                                     ?>
                                         <tr>
                                             <?php if (!isset($_GET["report"])) { ?>
@@ -360,7 +395,7 @@
                                             ?>
                                             <td><?= number_format($limit, 0, ".", ","); ?></td>
                                             <td><?= number_format($stock, 0, ".", ","); ?></td>
-                                            <td class="text-<?= $alstock; ?>"><?= $salstock; ?></td>
+                                            <td class="text-<?= $alstock; ?>"><?= $salstock; ?><?= $outdatenya; ?></td>
                                             <?php
                                             $buy = $usr->product_buy;
                                             // $sell=$usr->product_sell;
