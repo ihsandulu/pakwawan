@@ -59,6 +59,7 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Toko</th>
+                                        <th>Shift</th>
                                         <th>Produk</th>
                                         <th>No. Transaksi</th>
                                         <th>Qty</th>
@@ -70,6 +71,7 @@
                                     $builder = $this->db
                                         ->table("transactiond")
                                         ->join("transaction", "transaction.transaction_id=transactiond.transaction_id", "left")
+                                        ->join("user", "user.user_id=transaction.cashier_id", "left")
                                         ->join("store", "store.store_id=transactiond.store_id", "left")
                                         ->join("product", "product.product_id=transactiond.product_id", "left")
                                         ->where("transactiond.store_id",session()->get("store_id"))
@@ -93,6 +95,7 @@
                                         <tr>                                            
                                             <td><?= $no++; ?></td>
                                             <td><?= $usr->store_name; ?></td>
+                                            <td class="text-center"><?= $usr->user_name; ?> (<?= $usr->transaction_shift; ?>)</td>
                                             <td class="text-left"><?= $usr->product_name; ?></td>
                                             <td><?= $usr->transaction_no; ?></td>
                                             <td class="text-right"><?= number_format($usr->transactiond_qty,0,".",","); ?></td>
