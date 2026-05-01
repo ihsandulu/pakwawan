@@ -147,7 +147,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-2" for="stockopname_hitung">Stock Hitung:</label>
                                     <div class="col-sm-10">
-                                        <input required onkeyup="rupiahnumerik(this)" change="selisih()" type="text" class="form-control" id="stockopname_hitung" name="stockopname_hitung" placeholder="" value="<?= $stockopname_hitung; ?>">
+                                        <input  onkeyup="rupiahnumerik(this)" change="selisih()" type="text" class="form-control" id="stockopname_hitung" name="stockopname_hitung" placeholder="" value="<?= $stockopname_hitung; ?>">
                                     </div>
                                     <script>
                                         rupiahnumerik($("#stockopname_hitung"))
